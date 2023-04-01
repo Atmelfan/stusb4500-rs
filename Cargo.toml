@@ -16,7 +16,7 @@ keywords = ["no-std", "embedded-hal", "driver", "usb", "usb-pd"]
 [dependencies]
 byteorder = {version = "1.2.1", default-features = false}
 bitflags = "1.2"
-bitfield = "0.13.2"
+bitfield = "0.14.0"
 embedded-hal = "0.2"
 
 [dev-dependencies]
