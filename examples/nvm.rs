@@ -6,8 +6,14 @@
 //!
 //! [gui]: https://www.st.com/en/embedded-software/stsw-stusb002.html
 
+use std::fs::File;
+use std::io::{Read,Write};
+use std::path::PathBuf;
+use clap::{Parser,Subcommand};
 use linux_embedded_hal::I2cdev;
 use stusb4500::{Address, STUSB4500};
+
+const I2C_BUS: &str = "i2c-0";
 
 const DEFAULT_NVM_DATA: [[u8; 8]; 5] = [
     [0x00, 0x00, 0xB0, 0xAB, 0x00, 0x45, 0x00, 0x00],
@@ -17,19 +23,107 @@ const DEFAULT_NVM_DATA: [[u8; 8]; 5] = [
     [0x00, 0x4B, 0x90, 0x21, 0x43, 0x00, 0x40, 0xFB],
 ];
 
+/// Utility to read and write STUSB4500 NVM
+#[derive(Parser)]
+#[command(version, about, long_about = None)]
+struct Cli {
+    /// Turn debugging information on
+    #[arg(short, long, action = clap::ArgAction::Count)]
+    debug: u8,
+
+    #[command(subcommand)]
+    command: Option<Commands>,
+}
+
+#[derive(Subcommand)]
+enum Commands {
+    /// Read register block from STUSB4500 NVM
+    Read {
+	/// Optional I2C bus for access to stusb4500
+        #[arg(short, long, default_value=I2C_BUS)]
+    	bus: Option<String>,
+
+        /// Sets an input file
+        #[arg(short, long, value_name = "FILE")]
+        file: Option<PathBuf>,
+    },
+    /// Write register block to STUSB4500 NVM
+    Write {
+	/// Optional I2C bus for access to stusb4500
+        #[arg(short, long, default_value=I2C_BUS)]
+    	bus: Option<String>,
+
+        /// Set a custom output file
+        #[arg(short, long, value_name = "FILE")]
+        file: PathBuf,
+    },
+    /// Write factory reset register block to STUSB4500 NVM
+    FactoryReset {
+	/// Optional I2C bus for access to stusb4500
+        #[arg(short, long, default_value=I2C_BUS)]
+    	bus: Option<String>,
+    },
+}
+
 fn main() {
-    let mut mcu = STUSB4500::new(I2cdev::new("/dev/i2c-1").unwrap(), Address::Default);
-    let mut nvm = mcu.unlock_nvm().unwrap();
+let cli = Cli::parse();
 
-    let sectors = nvm.read_sectors().unwrap();
-    println!("Read NVM data:");
-    sectors.iter().for_each(|sector| {
-        sector.iter().for_each(|byte| print!(" 0x{:02X}", byte));
-        println!();
-    });
+    // You can check for the existence of subcommands, and if found use their
+    // matches just as you would the top level cmd
+    match &cli.command {
+        Some(Commands::Read { bus, file }) => {
+		println!("Reading NVM data:");
+		let  mut bus_path = bus.clone().unwrap();
+		bus_path.insert_str(0, "/dev/");
+		let mut mcu = STUSB4500::new(I2cdev::new(bus_path).unwrap(), Address::Default);
+		let mut nvm = mcu.unlock_nvm().unwrap();
+		let sectors = nvm.read_sectors().unwrap();
+		nvm.lock().unwrap();
 
-    println!("Writing default NVM data...");
-    nvm.write_sectors(DEFAULT_NVM_DATA).unwrap();
+		if let Some(dereffile) = file.as_deref() {
+			let mut f = File::create(dereffile).expect("Couldn't create file");
+			sectors.iter().for_each(|sector| {
+				f.write_all(sector).expect("Failed to write");
+			});
+		} else {
+			sectors.iter().for_each(|sector| {
+				sector.iter().for_each(|byte| print!(" 0x{:02X}", byte));
+				println!();
+			});
+		}
+        },
+        Some(Commands::Write { bus, file }) => {
 
-    nvm.lock().unwrap();
+		// Read the file
+		let mut f = File::open(file).expect("File not found");
+
+		let mut buffer: [u8; 40] = [0; 40];
+		f.read(&mut buffer).expect("Buffer overflow");
+		let mut sectors: [[u8; 8]; 5] = [[0;8];5];
+
+		for slice in 0..5 {
+		  for idx in 0..8 {
+		    sectors[slice][idx] = buffer[8*slice + idx];
+		  }
+		}
+
+		println!("Writing NVM data...");
+		let  mut bus_path = bus.clone().unwrap();
+		bus_path.insert_str(0, "/dev/");
+		let mut mcu = STUSB4500::new(I2cdev::new(bus_path).unwrap(), Address::Default);
+		let mut nvm = mcu.unlock_nvm().unwrap();
+		nvm.write_sectors(sectors).unwrap();
+		nvm.lock().unwrap();
+        },
+        Some(Commands::FactoryReset { bus }) => {
+		let  mut bus_path = bus.clone().unwrap();
+		bus_path.insert_str(0, "/dev/");
+		println!("Writing factory default NVM data...");
+		let mut mcu = STUSB4500::new(I2cdev::new(bus_path).unwrap(), Address::Default);
+		let mut nvm = mcu.unlock_nvm().unwrap();
+		nvm.write_sectors(DEFAULT_NVM_DATA).unwrap();
+		nvm.lock().unwrap();
+        },
+        None => {}
+    }
 }
