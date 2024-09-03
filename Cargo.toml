@@ -23,10 +23,3 @@ clap = { version = "4.5.16", features = ["derive"] }
 [dev-dependencies]
 linux-embedded-hal = "0.3"
 embedded-hal-mock = "0.9"
-
-[profile.release]
-opt-level = 'z'     # Optimize for size
-lto = true          # Enable link-time optimization
-codegen-units = 1   # Reduce number of codegen units to increase optimizations
-panic = 'abort'     # Abort on panic
-strip = true        # Strip symbols from binary*
