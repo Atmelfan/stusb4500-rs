@@ -63,6 +63,12 @@ enum Commands {
         #[arg(short, long, default_value=I2C_BUS)]
     	bus: Option<String>,
     },
+    /// Show status information
+    Status {
+	/// Optional I2C bus for access to stusb4500
+        #[arg(short, long, default_value=I2C_BUS)]
+    	bus: Option<String>,
+    },
 }
 
 fn main() {
@@ -123,6 +129,21 @@ let cli = Cli::parse();
 		let mut nvm = mcu.unlock_nvm().unwrap();
 		nvm.write_sectors(DEFAULT_NVM_DATA).unwrap();
 		nvm.lock().unwrap();
+        },
+        Some(Commands::Status { bus }) => {
+		let  mut bus_path = bus.clone().unwrap();
+		bus_path.insert_str(0, "/dev/");
+		let mut mcu = STUSB4500::new(I2cdev::new(bus_path).unwrap(), Address::Default);
+		let current_rdo = mcu.get_current_rdo().unwrap();
+		println!("Current RDO:");
+		println!("- position                    {}", current_rdo.position() );
+		println!("- give_back                   {}", current_rdo.give_back() );
+		println!("- capability_mismatch         {}", current_rdo.capability_mismatch() );
+		println!("- usb_communication_capable   {}", current_rdo.usb_communication_capable() );
+		println!("- no_usb_suspend              {}", current_rdo.no_usb_suspend() );
+		println!("- unchunked_extended_messages {}", current_rdo.unchunked_extended_messages() );
+		println!("- operating_current           {}", current_rdo.operating_current() );
+		println!("- max_operating_currernt      {}", current_rdo.max_operating_current() );
         },
         None => {}
     }
