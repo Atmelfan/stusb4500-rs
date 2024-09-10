@@ -136,24 +136,63 @@ let cli = Cli::parse();
 		bus_path.insert_str(0, "/dev/");
 		let mut mcu = STUSB4500::new(I2cdev::new(bus_path).unwrap(), Address::Default);
 
-		println!("PDO1:");
+		println!("PDO1");
 		match mcu.get_pdo(PdoChannel::PDO1).unwrap() {
 			Pdo::Fixed(pdo) => {
-				println!("{pdo:?}");
-//				println!("- fixed                         {}", pdo1.fixed() );
-//				println!("- higher_capability             {}", pdo1.higher_capability() );
-//				println!("- unconstrained_power           {}", pdo1.unconstrained_power() );
-//				println!("- usb_communications_capable    {}", pdo1.usb_communications_capable() );
-//				println!("- dual_role_data                {}", pdo1.dual_role_data() );
-//				println!("- fast_role_swap                {}", pdo1.fast_role_swap() );
-//				println!("- voltage                       {}", pdo1.voltage() );
-//				println!("- current                       {}", pdo1.current() );
+				println!("- fixed                         {}", pdo.fixed() );
+				println!("- higher_capability             {}", pdo.higher_capability() );
+				println!("- unconstrained_power           {}", pdo.unconstrained_power() );
+				println!("- usb_communications_capable    {}", pdo.usb_communications_capable() );
+				println!("- dual_role_data                {}", pdo.dual_role_data() );
+				println!("- fast_role_swap                {}", pdo.fast_role_swap() );
+				println!("- voltage                       {}", pdo.voltage() );
+				println!("- current                       {}", pdo.current() );
 			},
-			Pdo::Variable(pdo) => {
-				println!("{pdo:?}");
+			Pdo::Variable(_pdo) => {
+				println!("TBD: Variable");
 			},
 			_ => {
-				println!("The other one");
+				println!("TBD: Whatever Seimon said this was");
+			}
+		}
+
+		println!("PDO2");
+		match mcu.get_pdo(PdoChannel::PDO2).unwrap() {
+			Pdo::Fixed(pdo) => {
+				println!("- fixed                         {}", pdo.fixed() );
+				println!("- higher_capability             {}", pdo.higher_capability() );
+				println!("- unconstrained_power           {}", pdo.unconstrained_power() );
+				println!("- usb_communications_capable    {}", pdo.usb_communications_capable() );
+				println!("- dual_role_data                {}", pdo.dual_role_data() );
+				println!("- fast_role_swap                {}", pdo.fast_role_swap() );
+				println!("- voltage                       {}", pdo.voltage() );
+				println!("- current                       {}", pdo.current() );
+			},
+			Pdo::Variable(_pdo) => {
+				println!("TBD: Variable");
+			},
+			_ => {
+				println!("TBD: Whatever Seimon said this was");
+			}
+		}
+
+		println!("PDO3");
+		match mcu.get_pdo(PdoChannel::PDO3).unwrap() {
+			Pdo::Fixed(pdo) => {
+				println!("- fixed                         {}", pdo.fixed() );
+				println!("- higher_capability             {}", pdo.higher_capability() );
+				println!("- unconstrained_power           {}", pdo.unconstrained_power() );
+				println!("- usb_communications_capable    {}", pdo.usb_communications_capable() );
+				println!("- dual_role_data                {}", pdo.dual_role_data() );
+				println!("- fast_role_swap                {}", pdo.fast_role_swap() );
+				println!("- voltage                       {}", pdo.voltage() );
+				println!("- current                       {}", pdo.current() );
+			},
+			Pdo::Variable(_pdo) => {
+				println!("TBD: Variable");
+			},
+			_ => {
+				println!("TBD: Whatever Seimon said this was");
 			}
 		}
 
@@ -161,16 +200,15 @@ let cli = Cli::parse();
 		println!("Voltage {} V", voltage);
 
 		let current_rdo = mcu.get_current_rdo().unwrap();
-		println!("{current_rdo:?}");
-//		println!("Current RDO:");
-//		println!("- position                    {}", current_rdo.position() );
-//		println!("- give_back                   {}", current_rdo.give_back() );
-//		println!("- capability_mismatch         {}", current_rdo.capability_mismatch() );
-//		println!("- usb_communication_capable   {}", current_rdo.usb_communication_capable() );
-//		println!("- no_usb_suspend              {}", current_rdo.no_usb_suspend() );
-//		println!("- unchunked_extended_messages {}", current_rdo.unchunked_extended_messages() );
-//		println!("- operating_current           {} mA", current_rdo.operating_current() );
-//		println!("- max_operating_currernt      {} mA", current_rdo.max_operating_current() );
+		println!("Current RDO:");
+		println!("- position                    {}", current_rdo.position() );
+		println!("- give_back                   {}", current_rdo.give_back() );
+		println!("- capability_mismatch         {}", current_rdo.capability_mismatch() );
+		println!("- usb_communication_capable   {}", current_rdo.usb_communication_capable() );
+		println!("- no_usb_suspend              {}", current_rdo.no_usb_suspend() );
+		println!("- unchunked_extended_messages {}", current_rdo.unchunked_extended_messages() );
+		println!("- operating_current           {} mA", current_rdo.operating_current() );
+		println!("- max_operating_currernt      {} mA", current_rdo.max_operating_current() );
         },
         None => {}
     }
