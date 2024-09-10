@@ -11,7 +11,8 @@ use std::io::{Read,Write};
 use std::path::PathBuf;
 use clap::{Parser,Subcommand};
 use linux_embedded_hal::I2cdev;
-use stusb4500::{Address, STUSB4500, PdoChannel};
+use stusb4500::{Address, STUSB4500, PdoChannel, pdo};
+use pdo::Pdo;
 
 const I2C_BUS: &str = "i2c-0";
 
@@ -135,19 +136,29 @@ let cli = Cli::parse();
 		bus_path.insert_str(0, "/dev/");
 		let mut mcu = STUSB4500::new(I2cdev::new(bus_path).unwrap(), Address::Default);
 
-//		let pdo1 = mcu.get_pdo(PdoChannel::PDO1).unwrap();
-//		println!("PDO1:");
-//		println!("- fixed                         {}", pdo1.fixed() );
-//		println!("- higher_capability             {}", pdo1.higher_capability() );
-//		println!("- unconstrained_power           {}", pdo1.unconstrained_power() );
-//		println!("- usb_communications_capable    {}", pdo1.usb_communications_capable() );
-//		println!("- dual_role_data                {}", pdo1.dual_role_data() );
-//		println!("- fast_role_swap                {}", pdo1.fast_role_swap() );
-//		println!("- voltage                       {}", pdo1.voltage() );
-//		println!("- current                       {}", pdo1.current() );
+		println!("PDO1:");
+		match mcu.get_pdo(PdoChannel::PDO1).unwrap() {
+			Pdo::Fixed(pdo) => {
+				println!("{pdo:?}");
+//				println!("- fixed                         {}", pdo1.fixed() );
+//				println!("- higher_capability             {}", pdo1.higher_capability() );
+//				println!("- unconstrained_power           {}", pdo1.unconstrained_power() );
+//				println!("- usb_communications_capable    {}", pdo1.usb_communications_capable() );
+//				println!("- dual_role_data                {}", pdo1.dual_role_data() );
+//				println!("- fast_role_swap                {}", pdo1.fast_role_swap() );
+//				println!("- voltage                       {}", pdo1.voltage() );
+//				println!("- current                       {}", pdo1.current() );
+			},
+			Pdo::Variable(pdo) => {
+				println!("{pdo:?}");
+			},
+			_ => {
+				println!("The other one");
+			}
+		}
 
 		let voltage = mcu.get_voltage().unwrap();
-		println!("Voltage {}", voltage);
+		println!("Voltage {} V", voltage);
 
 		let current_rdo = mcu.get_current_rdo().unwrap();
 		println!("Current RDO:");
@@ -157,8 +168,8 @@ let cli = Cli::parse();
 		println!("- usb_communication_capable   {}", current_rdo.usb_communication_capable() );
 		println!("- no_usb_suspend              {}", current_rdo.no_usb_suspend() );
 		println!("- unchunked_extended_messages {}", current_rdo.unchunked_extended_messages() );
-		println!("- operating_current           {}", current_rdo.operating_current() );
-		println!("- max_operating_currernt      {}", current_rdo.max_operating_current() );
+		println!("- operating_current           {} mA", current_rdo.operating_current() );
+		println!("- max_operating_currernt      {} mA", current_rdo.max_operating_current() );
         },
         None => {}
     }
