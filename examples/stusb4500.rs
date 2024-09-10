@@ -1,4 +1,4 @@
-//! NVM Reset
+//! STMUSB4500 utility
 //!
 //! This demo is intended to run on a linux host (e.g. a Raspberry Pi) and shows how to read and
 //! write the NVM over I²C. It dumps the existing NVM and then writes the factory default - as
