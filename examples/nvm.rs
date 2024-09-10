@@ -11,7 +11,7 @@ use std::io::{Read,Write};
 use std::path::PathBuf;
 use clap::{Parser,Subcommand};
 use linux_embedded_hal::I2cdev;
-use stusb4500::{Address, STUSB4500};
+use stusb4500::{Address, STUSB4500, PdoChannel};
 
 const I2C_BUS: &str = "i2c-0";
 
@@ -134,6 +134,21 @@ let cli = Cli::parse();
 		let  mut bus_path = bus.clone().unwrap();
 		bus_path.insert_str(0, "/dev/");
 		let mut mcu = STUSB4500::new(I2cdev::new(bus_path).unwrap(), Address::Default);
+
+//		let pdo1 = mcu.get_pdo(PdoChannel::PDO1).unwrap();
+//		println!("PDO1:");
+//		println!("- fixed                         {}", pdo1.fixed() );
+//		println!("- higher_capability             {}", pdo1.higher_capability() );
+//		println!("- unconstrained_power           {}", pdo1.unconstrained_power() );
+//		println!("- usb_communications_capable    {}", pdo1.usb_communications_capable() );
+//		println!("- dual_role_data                {}", pdo1.dual_role_data() );
+//		println!("- fast_role_swap                {}", pdo1.fast_role_swap() );
+//		println!("- voltage                       {}", pdo1.voltage() );
+//		println!("- current                       {}", pdo1.current() );
+
+		let voltage = mcu.get_voltage().unwrap();
+		println!("Voltage {}", voltage);
+
 		let current_rdo = mcu.get_current_rdo().unwrap();
 		println!("Current RDO:");
 		println!("- position                    {}", current_rdo.position() );
