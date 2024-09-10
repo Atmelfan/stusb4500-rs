@@ -161,15 +161,16 @@ let cli = Cli::parse();
 		println!("Voltage {} V", voltage);
 
 		let current_rdo = mcu.get_current_rdo().unwrap();
-		println!("Current RDO:");
-		println!("- position                    {}", current_rdo.position() );
-		println!("- give_back                   {}", current_rdo.give_back() );
-		println!("- capability_mismatch         {}", current_rdo.capability_mismatch() );
-		println!("- usb_communication_capable   {}", current_rdo.usb_communication_capable() );
-		println!("- no_usb_suspend              {}", current_rdo.no_usb_suspend() );
-		println!("- unchunked_extended_messages {}", current_rdo.unchunked_extended_messages() );
-		println!("- operating_current           {} mA", current_rdo.operating_current() );
-		println!("- max_operating_currernt      {} mA", current_rdo.max_operating_current() );
+		println!("{current_rdo:?}");
+//		println!("Current RDO:");
+//		println!("- position                    {}", current_rdo.position() );
+//		println!("- give_back                   {}", current_rdo.give_back() );
+//		println!("- capability_mismatch         {}", current_rdo.capability_mismatch() );
+//		println!("- usb_communication_capable   {}", current_rdo.usb_communication_capable() );
+//		println!("- no_usb_suspend              {}", current_rdo.no_usb_suspend() );
+//		println!("- unchunked_extended_messages {}", current_rdo.unchunked_extended_messages() );
+//		println!("- operating_current           {} mA", current_rdo.operating_current() );
+//		println!("- max_operating_currernt      {} mA", current_rdo.max_operating_current() );
         },
         None => {}
     }
