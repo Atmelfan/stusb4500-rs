@@ -145,8 +145,8 @@ let cli = Cli::parse();
 				println!("- usb_communications_capable    {}", pdo.usb_communications_capable() );
 				println!("- dual_role_data                {}", pdo.dual_role_data() );
 				println!("- fast_role_swap                {}", pdo.fast_role_swap() );
-				println!("- voltage                       {}", pdo.voltage() );
-				println!("- current                       {}", pdo.current() );
+				println!("- voltage                       {} V", pdo.voltage() / 20.0);
+				println!("- current                       {} A", pdo.current() / 100.0);
 			},
 			Pdo::Variable(_pdo) => {
 				println!("TBD: Variable");
@@ -165,8 +165,8 @@ let cli = Cli::parse();
 				println!("- usb_communications_capable    {}", pdo.usb_communications_capable() );
 				println!("- dual_role_data                {}", pdo.dual_role_data() );
 				println!("- fast_role_swap                {}", pdo.fast_role_swap() );
-				println!("- voltage                       {}", pdo.voltage() );
-				println!("- current                       {}", pdo.current() );
+				println!("- voltage                       {} V", pdo.voltage() / 20.0);
+				println!("- current                       {} A", pdo.current() / 100.0);
 			},
 			Pdo::Variable(_pdo) => {
 				println!("TBD: Variable");
@@ -185,8 +185,8 @@ let cli = Cli::parse();
 				println!("- usb_communications_capable    {}", pdo.usb_communications_capable() );
 				println!("- dual_role_data                {}", pdo.dual_role_data() );
 				println!("- fast_role_swap                {}", pdo.fast_role_swap() );
-				println!("- voltage                       {}", pdo.voltage() );
-				println!("- current                       {}", pdo.current() );
+				println!("- voltage                       {} V", pdo.voltage() / 20.0);
+				println!("- current                       {} A", pdo.current() / 100.0);
 			},
 			Pdo::Variable(_pdo) => {
 				println!("TBD: Variable");
@@ -207,8 +207,8 @@ let cli = Cli::parse();
 		println!("- usb_communication_capable   {}", current_rdo.usb_communication_capable() );
 		println!("- no_usb_suspend              {}", current_rdo.no_usb_suspend() );
 		println!("- unchunked_extended_messages {}", current_rdo.unchunked_extended_messages() );
-		println!("- operating_current           {} mA", current_rdo.operating_current() );
-		println!("- max_operating_currernt      {} mA", current_rdo.max_operating_current() );
+		println!("- operating_current           {} A", current_rdo.operating_current() / 100.0);
+		println!("- max_operating_currernt      {} A", current_rdo.max_operating_current() / 100.0);
         },
         None => {}
     }
