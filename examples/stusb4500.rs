@@ -139,14 +139,14 @@ let cli = Cli::parse();
 		println!("PDO1");
 		match mcu.get_pdo(PdoChannel::PDO1).unwrap() {
 			Pdo::Fixed(pdo) => {
-				println!("- fixed                         {}", pdo.fixed() );
+				println!("Fixed PDO");
 				println!("- higher_capability             {}", pdo.higher_capability() );
 				println!("- unconstrained_power           {}", pdo.unconstrained_power() );
 				println!("- usb_communications_capable    {}", pdo.usb_communications_capable() );
 				println!("- dual_role_data                {}", pdo.dual_role_data() );
 				println!("- fast_role_swap                {}", pdo.fast_role_swap() );
-				println!("- voltage                       {} V", pdo.voltage() / 20.0);
-				println!("- current                       {} A", pdo.current() / 100.0);
+				println!("- voltage                       {} V", pdo.voltage() as f64 / 20.0);
+				println!("- current                       {} A", pdo.current() as f64 / 100.0);
 			},
 			Pdo::Variable(_pdo) => {
 				println!("TBD: Variable");
@@ -159,14 +159,14 @@ let cli = Cli::parse();
 		println!("PDO2");
 		match mcu.get_pdo(PdoChannel::PDO2).unwrap() {
 			Pdo::Fixed(pdo) => {
-				println!("- fixed                         {}", pdo.fixed() );
+				println!("Fixed PDO");
 				println!("- higher_capability             {}", pdo.higher_capability() );
 				println!("- unconstrained_power           {}", pdo.unconstrained_power() );
 				println!("- usb_communications_capable    {}", pdo.usb_communications_capable() );
 				println!("- dual_role_data                {}", pdo.dual_role_data() );
 				println!("- fast_role_swap                {}", pdo.fast_role_swap() );
-				println!("- voltage                       {} V", pdo.voltage() / 20.0);
-				println!("- current                       {} A", pdo.current() / 100.0);
+				println!("- voltage                       {} V", pdo.voltage() as f64 / 20.0);
+				println!("- current                       {} A", pdo.current() as f64 / 100.0);
 			},
 			Pdo::Variable(_pdo) => {
 				println!("TBD: Variable");
@@ -179,14 +179,14 @@ let cli = Cli::parse();
 		println!("PDO3");
 		match mcu.get_pdo(PdoChannel::PDO3).unwrap() {
 			Pdo::Fixed(pdo) => {
-				println!("- fixed                         {}", pdo.fixed() );
+				println!("Fixed PDO");
 				println!("- higher_capability             {}", pdo.higher_capability() );
 				println!("- unconstrained_power           {}", pdo.unconstrained_power() );
 				println!("- usb_communications_capable    {}", pdo.usb_communications_capable() );
 				println!("- dual_role_data                {}", pdo.dual_role_data() );
 				println!("- fast_role_swap                {}", pdo.fast_role_swap() );
-				println!("- voltage                       {} V", pdo.voltage() / 20.0);
-				println!("- current                       {} A", pdo.current() / 100.0);
+				println!("- voltage                       {} V", pdo.voltage() as f32 / 20.0);
+				println!("- current                       {} A", pdo.current() as f32 / 100.0);
 			},
 			Pdo::Variable(_pdo) => {
 				println!("TBD: Variable");
@@ -207,8 +207,8 @@ let cli = Cli::parse();
 		println!("- usb_communication_capable   {}", current_rdo.usb_communication_capable() );
 		println!("- no_usb_suspend              {}", current_rdo.no_usb_suspend() );
 		println!("- unchunked_extended_messages {}", current_rdo.unchunked_extended_messages() );
-		println!("- operating_current           {} A", current_rdo.operating_current() / 100.0);
-		println!("- max_operating_currernt      {} A", current_rdo.max_operating_current() / 100.0);
+		println!("- operating_current           {} A", current_rdo.operating_current() as f64 / 100.0);
+		println!("- max_operating_currernt      {} A", current_rdo.max_operating_current() as f64 / 100.0);
         },
         None => {}
     }
