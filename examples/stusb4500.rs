@@ -197,7 +197,9 @@ let cli = Cli::parse();
 		}
 
 		let voltage = mcu.get_voltage().unwrap();
-		println!("Voltage {} V", voltage);
+		println!("");
+		println!("Current Voltage {} V", voltage);
+		println!("");
 
 		let current_rdo = mcu.get_current_rdo().unwrap();
 		println!("Current RDO:");
