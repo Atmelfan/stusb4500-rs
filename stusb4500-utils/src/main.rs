@@ -6,22 +6,16 @@
 //! [gui]: https://www.st.com/en/embedded-software/stsw-stusb002.html
 
 use clap::{Parser, Subcommand};
-use std::fs::File;
-use std::io::{Read, Write};
-use std::path::PathBuf;
-use stusb4500::{pdo, Address, PdoChannel, STUSB4500, STUSB4500_ADDR};
+use std::{
+    fs::File,
+    io::{Read, Write},
+    path::PathBuf,
+};
+use stusb4500::{nvm::DEFAULT_NVM_DATA, pdo, Address, PdoChannel, STUSB4500, STUSB4500_ADDR};
 
 use linux_embedded_hal::I2cdev;
 
 const I2C_BUS: &str = "i2c-0";
-
-const DEFAULT_NVM_DATA: [[u8; 8]; 5] = [
-    [0x00, 0x00, 0xB0, 0xAB, 0x00, 0x45, 0x00, 0x00],
-    [0x10, 0x40, 0x9C, 0x1C, 0xFF, 0x01, 0x3C, 0xDF],
-    [0x02, 0x40, 0x0F, 0x00, 0x32, 0x00, 0xFC, 0xF1],
-    [0x00, 0x19, 0x56, 0xAF, 0xF5, 0x35, 0x5F, 0x00],
-    [0x00, 0x4B, 0x90, 0x21, 0x43, 0x00, 0x40, 0xFB],
-];
 
 /// Utility to read and write STUSB4500 NVM
 #[derive(Parser)]
