@@ -1,3 +1,5 @@
+use core::fmt::Display;
+
 use bitfield::bitfield;
 
 #[derive(Debug, PartialOrd, PartialEq)]
@@ -6,6 +8,17 @@ pub enum FastSwapSupport {
     DefaultUsb = 1,
     _1A5_5V = 2,
     _3A0_5V = 3,
+}
+
+impl Display for FastSwapSupport {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        match self {
+            FastSwapSupport::NotSupported => write!(f, "Not supported"),
+            FastSwapSupport::DefaultUsb => write!(f, "0.5A @ 5V"),
+            FastSwapSupport::_1A5_5V => write!(f, "1.5A @ 5V"),
+            FastSwapSupport::_3A0_5V => write!(f, "3.0A @ 5V"),
+        }
+    }
 }
 
 impl Default for FastSwapSupport {
@@ -25,6 +38,17 @@ impl Into<u32> for FastSwapSupport {
     }
 }
 
+impl From<u32> for FastSwapSupport {
+    fn from(value: u32) -> Self {
+        match value & 0x3 {
+            0 => FastSwapSupport::NotSupported,
+            1 => FastSwapSupport::DefaultUsb,
+            2 => FastSwapSupport::_1A5_5V,
+            _ => FastSwapSupport::_3A0_5V,
+        }
+    }
+}
+
 const PDO_SNK_FIXED: u32 = 0x0 << 30;
 
 bitfield! {
@@ -37,8 +61,8 @@ bitfield! {
     pub unconstrained_power, set_unconstrained_power: 27;
     pub usb_communications_capable, set_usb_communications_capable: 26;
     pub dual_role_data, set_dual_role_data: 25;
-    pub fast_role_swap, set_fast_role_swap: 24, 23;
-    pub reserved, _: 22, 20;
+    pub u32, from into FastSwapSupport, fast_role_swap, set_fast_role_swap: 24, 23;
+    pub _reserved, _: 22, 20;
     pub voltage, set_voltage: 19, 10;
     pub current, set_current: 9, 0;
 }
@@ -91,10 +115,32 @@ impl Default for BatteryPdo {
     }
 }
 
+const PDO_SNK_AUGMENTED: u32 = 0x3 << 30;
+bitfield! {
+    pub struct AugmentedPdo(u32);
+    impl Debug;
+    // The fields default to u16
+    pub battery, _: 31, 30;
+    pub progdev, _: 29, 28;
+    pub reserved2, _: 27, 25;
+    pub max_voltage, set_max_voltage: 25, 18;
+    pub reserved1, _: 17;
+    pub min_voltage, set_min_voltage: 16, 8;
+    pub reserved0, _: 7;
+    pub max_current, set_max_current: 6, 0;
+}
+
+impl Default for AugmentedPdo {
+    fn default() -> Self {
+        Self(PDO_SNK_AUGMENTED)
+    }
+}
+
 pub enum Pdo {
     Fixed(FixedPdo),
     Variable(VariablePdo),
     Battery(BatteryPdo),
+    Augmented(AugmentedPdo),
 }
 impl Pdo {
     pub fn new_fixed(voltage: u16, current: u16) -> Self {
@@ -141,6 +187,7 @@ impl Pdo {
             Pdo::Fixed(a) => a.0,
             Pdo::Variable(a) => a.0,
             Pdo::Battery(a) => a.0,
+            Pdo::Augmented(a) => a.0,
         }
     }
 
@@ -149,6 +196,7 @@ impl Pdo {
             PDO_SNK_FIXED => Some(Pdo::Fixed(FixedPdo(bits))),
             PDO_SNK_VARIABLE => Some(Pdo::Variable(VariablePdo(bits))),
             PDO_SNK_BATTERY => Some(Pdo::Battery(BatteryPdo(bits))),
+            PDO_SNK_AUGMENTED => Some(Pdo::Augmented(AugmentedPdo(bits))),
             _ => None,
         }
     }

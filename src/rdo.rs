@@ -12,5 +12,4 @@ bitfield! {
   pub unchunked_extended_messages, _: 23;
   pub operating_current, _: 19, 10;
   pub max_operating_current, _: 9, 0;
-
 }

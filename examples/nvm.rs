@@ -7,18 +7,15 @@
 //! [gui]: https://www.st.com/en/embedded-software/stsw-stusb002.html
 
 use linux_embedded_hal::I2cdev;
-use stusb4500::{Address, STUSB4500};
+use stusb4500::{nvm::DEFAULT_NVM_DATA, Address, STUSB4500};
 
-const DEFAULT_NVM_DATA: [[u8; 8]; 5] = [
-    [0x00, 0x00, 0xB0, 0xAB, 0x00, 0x45, 0x00, 0x00],
-    [0x10, 0x40, 0x9C, 0x1C, 0xFF, 0x01, 0x3C, 0xDF],
-    [0x02, 0x40, 0x0F, 0x00, 0x32, 0x00, 0xFC, 0xF1],
-    [0x00, 0x19, 0x56, 0xAF, 0xF5, 0x35, 0x5F, 0x00],
-    [0x00, 0x4B, 0x90, 0x21, 0x43, 0x00, 0x40, 0xFB],
-];
+const I2C_BUS: &str = "i2c-1";
 
 fn main() {
-    let mut mcu = STUSB4500::new(I2cdev::new("/dev/i2c-1").unwrap(), Address::Default);
+    let mut mcu = STUSB4500::new(
+        I2cdev::new(format!("/dev/{I2C_BUS}")).unwrap(),
+        Address::Default,
+    );
     let mut nvm = mcu.unlock_nvm().unwrap();
 
     let sectors = nvm.read_sectors().unwrap();
