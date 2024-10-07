@@ -129,6 +129,11 @@ where
         .ok_or(Error::InvalidPdo)
     }
 
+    pub fn get_voltage(&mut self) -> Result<f64, Error<E>> {
+    	let volts = self.read(Register::MonitoringCtrl1)?;
+    	Ok((volts as f64) / 10.0)
+    }
+
     pub fn get_current_rdo(&mut self) -> Result<Rdo, Error<E>> {
         Ok(Rdo(self.read_word(Register::RDORegStatus)?))
     }

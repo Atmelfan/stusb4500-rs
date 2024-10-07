@@ -24,7 +24,7 @@ pub enum Register {
     PDCommandCtrl = 0x1A,
     //0x1B-0x1F, Reserved
     MonitoringCtrl0 = 0x20,
-    //0x21, Reserved
+    MonitoringCtrl1 = 0x21,
     MonitoringCtrl2 = 0x22,
     ResetCtrl = 0x23,
     //0x24, Reserved
